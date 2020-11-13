@@ -1,6 +1,6 @@
 ---
 title: "Polling Error"
-author: "Ben P-S- Lee"
+author: "Ben Lee"
 date: "11/12/2020"
 output:
   github_document:
