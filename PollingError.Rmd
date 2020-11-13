@@ -8,10 +8,10 @@ output:
 ---
 
 ```{r setup, include=FALSE}
-knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, cache = TRUE, message = FALSE, warning = FALSE)
+knitr::opts_chunk$set(include = FALSE, cache = TRUE, message = FALSE, warning = FALSE)
 ```
 
-```{r import, include=FALSE}
+```{r import}
 
 library(tidyverse)
 library(magrittr)
@@ -24,14 +24,16 @@ poll <- poll_raw %>%
          r_vchange = Presidential_Vote_R2020 - Presidential_Vote_R2016, d_vchange = Presidential_Vote_D2020 - Presidential_Vote_D2016)
 
 ```
+#Introduction
+
+After the Nov.3 election, people are chastising pollster for missing, again.
 
 ```{r poll error 2020}
 
 poll %>%
   ggplot(aes(x = r_diff2020, y = d_diff2020, label = State)) +
   geom_text() + geom_abline(aes(intercept = 0, slope = -1)) +
-  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10)) +
-  facet_wrap(vars(Region))
+  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10))
   
 
 ```
@@ -41,32 +43,62 @@ poll %>%
 poll %>%
   ggplot(aes(x = r_diff2016, y = d_diff2016, label = State)) +
   geom_text() + geom_abline(aes(intercept = 0, slope = -1)) +
-  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10)) +
-  facet_wrap(vars(Region))
+  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10))
 
 ```
+
+## Pollsters are having a hard time with Republican voters
 
 ```{r republican change}
 
 poll %>%
   ggplot(aes(x = r_pchange, y = r_vchange, label = State)) +
   geom_text() + geom_abline(aes(intercept = 0, slope = 1)) +
-  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10)) +
-  facet_wrap(vars(Region))
+  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10))
 
 ```
+
+##Pollster tends to get the change of Democrats Right
+
+
 ```{r democrats change}
 
 poll %>%
   ggplot(aes(x = d_pchange, y = d_vchange, label = State)) +
   geom_text() + geom_abline(aes(intercept = 0, slope = 1)) +
-  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10)) +
-  facet_wrap(vars(Region))
+  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10))
 
 
 ```
 
+```{r regional breakown}
 
+poll_regional <- poll %>%
+  filter(!is.na(Region)) %>%
+  group_by(Region) %>%
+  summarise(r2020avg = mean(r_diff2020), r2020se = sd(r_diff2020),
+            d2020avg = mean(d_diff2020), d2020se = sd(d_diff2020),
+            r2016avg = mean(r_diff2016), r2016se = sd(r_diff2016),
+            d2016avg = mean(d_diff2016), d2016se = sd(d_diff2016))
 
+```
+
+```{r 2020 error regional plot}
+
+poll %>%
+  filter(!is.na(Region)) %>%
+  ggplot(aes(x = Region)) +
+  geom_boxplot(aes(y = r_diff2020), color = "red") + geom_boxplot(aes(y = d_diff2020), color = "blue")
+
+```
+
+```{r 2016 erro regional plot}
+
+poll %>%
+  filter(!is.na(Region)) %>%
+  ggplot(aes(x = Region)) +
+  geom_boxplot(aes(y = r_diff2016), color = "red") + geom_boxplot(aes(y = d_diff2016), color = "blue")
+
+```
 
 
