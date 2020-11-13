@@ -1,0 +1,72 @@
+---
+title: "Polling Error"
+author: "Ben P-S- Lee"
+date: "11/12/2020"
+output:
+  github_document:
+    toc: TRUE
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE, tidy = TRUE, cache = TRUE, message = FALSE, warning = FALSE)
+```
+
+```{r import, include=FALSE}
+
+library(tidyverse)
+library(magrittr)
+poll_raw <- read_csv("PollingError.csv")
+
+poll <- poll_raw %>%
+  mutate(r_diff2020 = Presidential_Vote_R2020 - Presidential_Poll_R2020, d_diff2020 = Presidential_Vote_D2020 - Presidential_Poll_D2020,
+         r_diff2016 = Presidential_Vote_R2016 - Presidential_Poll_R2016, d_diff2016 = Presidential_Vote_D2016 - Presidential_Poll_D2016,
+         r_pchange = Presidential_Poll_R2020 - Presidential_Poll_R2016, d_pchange = Presidential_Poll_D2020 - Presidential_Poll_D2016,
+         r_vchange = Presidential_Vote_R2020 - Presidential_Vote_R2016, d_vchange = Presidential_Vote_D2020 - Presidential_Vote_D2016)
+
+```
+
+```{r poll error 2020}
+
+poll %>%
+  ggplot(aes(x = r_diff2020, y = d_diff2020, label = State)) +
+  geom_text() + geom_abline(aes(intercept = 0, slope = -1)) +
+  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10)) +
+  facet_wrap(vars(Region))
+  
+
+```
+
+```{r poll error 2016}
+
+poll %>%
+  ggplot(aes(x = r_diff2016, y = d_diff2016, label = State)) +
+  geom_text() + geom_abline(aes(intercept = 0, slope = -1)) +
+  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10)) +
+  facet_wrap(vars(Region))
+
+```
+
+```{r republican change}
+
+poll %>%
+  ggplot(aes(x = r_pchange, y = r_vchange, label = State)) +
+  geom_text() + geom_abline(aes(intercept = 0, slope = 1)) +
+  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10)) +
+  facet_wrap(vars(Region))
+
+```
+```{r democrats change}
+
+poll %>%
+  ggplot(aes(x = d_pchange, y = d_vchange, label = State)) +
+  geom_text() + geom_abline(aes(intercept = 0, slope = 1)) +
+  scale_x_continuous(limits = c(-10, 10)) + scale_y_continuous(limits = c(-10,10)) +
+  facet_wrap(vars(Region))
+
+
+```
+
+
+
+
+
